@@ -32,7 +32,7 @@ body {
   min-height: 100vh;
 }
 
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; touch-action: manipulation; }
 input, select { font-family: inherit; }
 
 /* ── App Shell ──────────────────────────────────────── */
@@ -391,7 +391,8 @@ input, select { font-family: inherit; }
   gap: 5px;
   flex: 1;
   justify-content: center;
-  padding: 7px 12px;
+  padding: 8px 12px;
+  min-height: 36px;
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
   font-weight: 600;
@@ -498,6 +499,7 @@ input, select { font-family: inherit; }
   padding: 24px;
   overflow-y: auto;
   flex: 1;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-details-grid {
@@ -676,31 +678,113 @@ input, select { font-family: inherit; }
 }
 
 /* ── Responsive ─────────────────────────────────────── */
+
+/* Large tablet (≤ 900px) */
+@media (max-width: 900px) {
+  .header-stats { gap: 8px; }
+  .voter-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+
+/* Tablet / small laptop (≤ 768px) */
 @media (max-width: 768px) {
-  .header-inner { gap: 14px; }
+  .header { padding: 14px 16px; }
+  .header-inner { gap: 10px; }
   .header-title { font-size: 1.2rem; }
+  .header-subtitle { font-size: 0.78rem; }
   .header-stats { gap: 6px; }
   .stat-chip { min-width: 58px; padding: 5px 10px; }
   .stat-chip-value { font-size: 0.9rem; }
 
-  .main { padding: 16px 14px 48px; }
-  .controls-bar { padding: 16px; }
+  .main { padding: 14px 12px 48px; }
+  .controls-bar { padding: 14px 16px; }
 
-  .filter-panel { gap: 14px; }
-  .filter-group { flex-wrap: wrap; }
+  .filter-panel { gap: 12px; flex-direction: column; align-items: flex-start; }
+  .filter-group { width: 100%; }
+  .filter-radio-group { flex-wrap: wrap; }
 
   .voter-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
 
   .modal-details-grid { grid-template-columns: 1fr; }
   .modal { max-height: 95vh; }
-  .modal-header { padding: 16px; }
+  .modal-header { padding: 16px 18px; }
   .modal-body { padding: 16px; }
   .modal-footer { padding: 12px 16px; }
 
-  .pagination-wrapper { flex-direction: column; align-items: flex-start; }
+  .pagination-wrapper { flex-direction: column; align-items: stretch; gap: 12px; }
+  .pagination-controls { justify-content: center; flex-wrap: wrap; }
+  .pagination-size { justify-content: center; }
 }
 
+/* Mobile landscape / large phone (≤ 600px) */
+@media (max-width: 600px) {
+  .header-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .header-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    gap: 6px;
+  }
+  .stat-chip { min-width: unset; }
+
+  .voter-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .voter-name { font-size: 0.92rem; }
+  .voter-card-body { padding: 10px 12px; }
+  .voter-card-footer { padding: 8px 12px; }
+  .voter-card-header { padding: 10px 12px 8px; }
+
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .page-btn { width: 40px; height: 40px; font-size: 0.9rem; }
+}
+
+/* Mobile portrait (≤ 480px) */
 @media (max-width: 480px) {
+  .header { padding: 12px 14px; }
+  .header-title { font-size: 1.1rem; }
+  .header-subtitle { font-size: 0.72rem; }
   .header-stats { display: none; }
-  .voter-grid { grid-template-columns: 1fr; }
+
+  .main { padding: 12px 10px 40px; }
+  .controls-bar { padding: 12px; border-radius: var(--radius-md); }
+
+  .search-bar { padding: 9px 14px; }
+  .search-input { font-size: 0.95rem; }
+
+  .filter-panel { gap: 10px; }
+  .filter-label { font-size: 0.78rem; }
+  .filter-radio-btn { padding: 7px 12px; font-size: 0.82rem; min-height: 38px; }
+  .age-input { width: 64px; padding: 7px 8px; min-height: 38px; }
+
+  .voter-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  .modal { max-height: 94vh; }
+  .modal-avatar { width: 44px; height: 44px; font-size: 1.3rem; }
+  .modal-name { font-size: 1.15rem; }
+
+  .pagination-info { font-size: 0.8rem; text-align: center; width: 100%; }
+  .pagination-size { justify-content: center; }
+  .page-size-label { font-size: 0.8rem; }
+}
+
+/* Very small phones (≤ 360px) */
+@media (max-width: 360px) {
+  .header-title { font-size: 1rem; }
+  .header-subtitle { font-size: 0.68rem; }
+  .header-brand { gap: 10px; }
+
+  .search-input { font-size: 0.9rem; }
+  .filter-radio-btn { padding: 6px 10px; font-size: 0.78rem; }
+  .age-input { width: 58px; }
+
+  .voter-name { font-size: 0.88rem; }
+  .modal-header { padding: 12px 14px; }
+  .modal-name { font-size: 1.05rem; }
+  .modal-body { padding: 12px; }
+  .modal-details-grid { gap: 8px; }
+  .modal-detail-item { padding: 10px 12px; }
 }

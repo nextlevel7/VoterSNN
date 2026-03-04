@@ -83,3 +83,9 @@ export function matchesQuery(transliteratedName, query) {
 export function isNepali(text) {
   return /[\u0900-\u097F]/.test(text);
 }
+
+export function genderLabel(nepali) {
+  if (nepali === 'महिला') return 'Female (महिला)';
+  if (nepali === 'पुरुष') return 'Male (पुरुष)';
+  return nepali;
+}

@@ -5,7 +5,7 @@ import FilterPanel from './components/FilterPanel';
 import VoterCard from './components/VoterCard';
 import VoterModal from './components/VoterModal';
 import Pagination from './components/Pagination';
-import { transliterate, matchesQuery, isNepali } from './utils/transliterate';
+import { transliterate, matchesQuery, isNepali, scoreQuery, scoreNepali } from './utils/transliterate';
 import { loadEncryptedVoters } from './utils/crypto';
 
 const PAGE_SIZE_DEFAULT = 24;
@@ -71,28 +71,43 @@ export default function App() {
     const minAge = ageMin !== '' ? Number(ageMin) : null;
     const maxAge = ageMax !== '' ? Number(ageMax) : null;
 
-    return voters.filter((voter, idx) => {
+    // Show nothing until the user has typed something in the search field
+    if (!hasSearch) return [];
+
+    const matched = [];
+
+    voters.forEach((voter, idx) => {
       // Search filter
       if (hasSearch) {
         if (nepaliInput) {
-          // Direct Nepali match
-          if (!voter['मतदाताको नाम'].includes(debouncedSearch.trim())) return false;
+          if (!voter['मतदाताको नाम'].includes(debouncedSearch.trim())) return;
         } else {
-          // English → transliterated match
-          if (!matchesQuery(transliterations.current[idx], debouncedSearch)) return false;
+          if (!matchesQuery(transliterations.current[idx], debouncedSearch)) return;
         }
       }
 
       // Gender filter
-      if (genderFilter && voter['लिङ्ग'] !== genderFilter) return false;
+      if (genderFilter && voter['लिङ्ग'] !== genderFilter) return;
 
       // Age filter
       const age = Number(voter['उमेर(वर्ष)']);
-      if (minAge !== null && age < minAge) return false;
-      if (maxAge !== null && age > maxAge) return false;
+      if (minAge !== null && age < minAge) return;
+      if (maxAge !== null && age > maxAge) return;
 
-      return true;
+      // Compute relevance score for sorting
+      const score = hasSearch
+        ? nepaliInput
+          ? scoreNepali(voter['मतदाताको नाम'], debouncedSearch.trim())
+          : scoreQuery(transliterations.current[idx], debouncedSearch)
+        : 2;
+
+      matched.push({ voter, score });
     });
+
+    // Sort: starts-with first (score 0), then word-starts-with (score 1), then rest (score 2)
+    matched.sort((a, b) => a.score - b.score);
+
+    return matched.map(m => m.voter);
   }, [voters, debouncedSearch, genderFilter, ageMin, ageMax]);
 
   // Paginated slice
@@ -178,12 +193,20 @@ export default function App() {
         </div>
 
         {filteredVoters.length === 0 ? (
-          <div className="empty-state">
-            <span className="empty-icon">🔍</span>
-            <h3>No voters found</h3>
-            <p>Try adjusting your search or filters</p>
-            <button className="btn-reset-empty" onClick={handleReset}>Clear all filters</button>
-          </div>
+          !debouncedSearch.trim() ? (
+            <div className="empty-state">
+              <span className="empty-icon">🔍</span>
+              <h3>Search to see voters</h3>
+              <p>Type a name above to find voters</p>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <span className="empty-icon">😶</span>
+              <h3>No voters found</h3>
+              <p>Try adjusting your search or filters</p>
+              <button className="btn-reset-empty" onClick={handleReset}>Clear all filters</button>
+            </div>
+          )
         ) : (
           <>
             <div className="voter-grid">

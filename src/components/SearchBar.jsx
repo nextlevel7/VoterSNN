@@ -22,12 +22,15 @@ export default function SearchBar({ value, onChange, resultCount, totalCount }) 
 
         <input
           ref={inputRef}
-          type="text"
+          type="search"
+          inputMode="search"
           className="search-input"
-          placeholder="Search by name in English or Nepali… (e.g. Ram, Shrestha, राम)"
+          placeholder="Search by name… (Ram, Shrestha, राम)"
           value={value}
           onChange={e => onChange(e.target.value)}
           autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
           spellCheck={false}
         />
 

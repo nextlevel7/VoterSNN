@@ -677,6 +677,89 @@ input, select { font-family: inherit; }
   font-size: 0.75rem;
 }
 
+/* ── Tap feedback on cards ───────────────────────────── */
+.voter-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.92;
+}
+
+/* ── Modal drag handle ──────────────────────────────── */
+.modal-drag-handle {
+  display: none;
+  width: 40px;
+  height: 4px;
+  background: rgba(0,0,0,.18);
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+/* ── Gender filter label variants ──────────────────── */
+.filter-btn-short { display: none; }
+.filter-btn-full  { display: inline; }
+
+/* ── Filter collapse toggle (mobile only) ───────────── */
+.filter-toggle-btn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--primary);
+  padding: 8px 0;
+  width: 100%;
+}
+.filter-toggle-btn svg {
+  transition: transform var(--transition);
+}
+.filter-toggle-btn.open svg:last-child {
+  transform: rotate(180deg);
+}
+/* Desktop: always visible */
+.filter-collapsible {
+  display: contents;
+}
+/* Mobile: collapsed by default, animated open */
+@media (max-width: 600px) {
+  .filter-collapsible {
+    display: block;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.28s ease, opacity 0.22s ease;
+  }
+  .filter-collapsible.is-open {
+    max-height: 320px;
+    opacity: 1;
+  }
+}
+
+/* ── Pagination mobile ──────────────────────────────── */
+.pagination-mobile { display: none; }
+.pagination-mobile .page-btn-lg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  transition: all var(--transition);
+}
+.pagination-mobile .page-btn-lg:disabled { opacity: 0.35; cursor: not-allowed; }
+.pagination-mobile .page-btn-lg:not(:disabled):active { background: var(--primary-light); }
+.pagination-page-indicator {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* ── Responsive ─────────────────────────────────────── */
 
 /* Large tablet (≤ 900px) */
@@ -732,14 +815,42 @@ input, select { font-family: inherit; }
   .voter-card-footer { padding: 8px 12px; }
   .voter-card-header { padding: 10px 12px 8px; }
 
+  /* Bottom sheet modal */
   .modal-overlay { padding: 0; align-items: flex-end; }
   .modal {
     max-width: 100%;
     max-height: 92vh;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
+  .modal-drag-handle { display: block; }
 
-  .page-btn { width: 40px; height: 40px; font-size: 0.9rem; }
+  /* Simplified pagination */
+  .pagination-controls { display: none; }
+  .pagination-size { display: none; }
+  .pagination-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+  .pagination-wrapper { flex-direction: column; gap: 10px; }
+  .pagination-info { text-align: center; }
+
+  /* Show only gender filter on mobile — compact pill row */
+  .filter-toggle-btn { display: none; }
+  .filter-collapsible { display: contents; }
+  .filter-group:has(.age-range-inputs) { display: none; }
+  .filter-reset-btn { display: none; }
+  .filter-panel { gap: 0; margin-top: 10px; }
+  .filter-group { width: auto; gap: 6px; }
+  .filter-label { display: none; }
+  .filter-radio-group { gap: 4px; }
+  .filter-radio-btn { padding: 5px 12px; font-size: 0.82rem; min-height: 34px; border-radius: 20px; }
+  .filter-btn-full { display: none; }
+  .filter-btn-short { display: inline; }
+  /* Hide the English/नेपाली mode tag on mobile */
+  .search-mode-tag { display: none; }
 }
 
 /* Mobile portrait (≤ 480px) */
@@ -750,15 +861,25 @@ input, select { font-family: inherit; }
   .header-stats { display: none; }
 
   .main { padding: 12px 10px 40px; }
-  .controls-bar { padding: 12px; border-radius: var(--radius-md); }
 
+  /* Sticky controls bar */
+  .controls-bar {
+    padding: 12px;
+    border-radius: var(--radius-md);
+    position: sticky;
+    top: 60px;
+    z-index: 90;
+  }
+
+  /* Prevent iOS auto-zoom on input focus */
+  .search-input { font-size: 16px; }
+  .age-input { font-size: 16px; }
   .search-bar { padding: 9px 14px; }
-  .search-input { font-size: 0.95rem; }
 
   .filter-panel { gap: 10px; }
   .filter-label { font-size: 0.78rem; }
-  .filter-radio-btn { padding: 7px 12px; font-size: 0.82rem; min-height: 38px; }
-  .age-input { width: 64px; padding: 7px 8px; min-height: 38px; }
+  .filter-radio-btn { padding: 8px 14px; font-size: 0.84rem; min-height: 44px; }
+  .age-input { width: 64px; padding: 8px; min-height: 44px; }
 
   .voter-grid { grid-template-columns: 1fr; gap: 10px; }
 
@@ -767,8 +888,6 @@ input, select { font-family: inherit; }
   .modal-name { font-size: 1.15rem; }
 
   .pagination-info { font-size: 0.8rem; text-align: center; width: 100%; }
-  .pagination-size { justify-content: center; }
-  .page-size-label { font-size: 0.8rem; }
 }
 
 /* Very small phones (≤ 360px) */
@@ -777,8 +896,8 @@ input, select { font-family: inherit; }
   .header-subtitle { font-size: 0.68rem; }
   .header-brand { gap: 10px; }
 
-  .search-input { font-size: 0.9rem; }
-  .filter-radio-btn { padding: 6px 10px; font-size: 0.78rem; }
+  .search-input { font-size: 16px; }
+  .filter-radio-btn { padding: 7px 11px; font-size: 0.8rem; }
   .age-input { width: 58px; }
 
   .voter-name { font-size: 0.88rem; }

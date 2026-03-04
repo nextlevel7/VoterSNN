@@ -47,6 +47,7 @@ export default function VoterModal({ voter, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-drag-handle" />
         {/* Header */}
         <div className={`modal-header ${isFemale ? 'female' : 'male'}`}>
           <div className="modal-avatar">

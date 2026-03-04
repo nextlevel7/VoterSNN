@@ -19,6 +19,33 @@ export default function Pagination({ currentPage, totalPages, onPageChange, page
         {Math.min(currentPage * pageSize, totalItems)} of {totalItems.toLocaleString()} results
       </div>
 
+      {/* Simplified mobile pagination */}
+      <div className="pagination-mobile">
+        <button
+          className="page-btn-lg"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          aria-label="Previous page"
+        >
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Prev
+        </button>
+        <span className="pagination-page-indicator">Page {currentPage} / {totalPages}</span>
+        <button
+          className="page-btn-lg"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          aria-label="Next page"
+        >
+          Next
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+
       <div className="pagination-controls">
         <button
           className="page-btn nav"

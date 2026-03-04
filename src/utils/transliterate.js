@@ -69,14 +69,76 @@ export function normalizeSearch(str) {
     .trim();
 }
 
+// Phonetic aliases for abbreviation matching
+// e.g. "C" in K.C. → "सी" → transliterates to "si", but user types "c"
+const ABBREV_ALIASES = {
+  c: ['s', 'k', 'ch'],
+  f: ['ph'],
+  w: ['v'],
+  z: ['s'],
+};
+
+function phoneticStartsWith(token, prefix) {
+  const variants = [prefix, ...(ABBREV_ALIASES[prefix] || [])];
+  return variants.some(v => token.startsWith(v));
+}
+
+// Checks if queryParts (e.g. ["k","c"]) match a consecutive window of nameTokens
+function matchesAbbreviation(nameTokens, queryParts) {
+  const len = queryParts.length;
+  outer: for (let i = 0; i <= nameTokens.length - len; i++) {
+    for (let j = 0; j < len; j++) {
+      if (!phoneticStartsWith(nameTokens[i + j], queryParts[j])) continue outer;
+    }
+    return true;
+  }
+  return false;
+}
+
 // Returns true if the voter name (transliterated) matches the query
 export function matchesQuery(transliteratedName, query) {
   if (!query) return true;
   const norm = normalizeSearch(transliteratedName);
   const q = normalizeSearch(query);
-  // Split query by spaces and require all words to match
+  // Split query by spaces and require all tokens to match
   const words = q.split(' ').filter(Boolean);
-  return words.every(word => norm.includes(word));
+  return words.every(word => {
+    // Normal substring match
+    if (norm.includes(word)) return true;
+
+    // Abbreviation match: "k.c" → each dot-part should prefix-match a name token
+    // Tokenise the transliterated name by spaces AND dots
+    if (word.includes('.')) {
+      const queryParts = word.split('.').filter(Boolean);
+      const nameTokens = norm.split(/[\s.]+/).filter(Boolean);
+      return matchesAbbreviation(nameTokens, queryParts);
+    }
+
+    return false;
+  });
+}
+
+// Relevance score for sorting (lower = better match)
+// 0 → name starts with query
+// 1 → a word in the name starts with query
+// 2 → query appears anywhere (current filter already guarantees a match)
+export function scoreQuery(transliteratedName, query) {
+  if (!query) return 2;
+  const norm = normalizeSearch(transliteratedName);
+  const q = normalizeSearch(query);
+  if (norm.startsWith(q)) return 0;
+  const words = norm.split(/[\s.]+/).filter(Boolean);
+  if (words.some(w => w.startsWith(q))) return 1;
+  return 2;
+}
+
+export function scoreNepali(name, query) {
+  if (!query) return 2;
+  const q = query.trim();
+  if (name.startsWith(q)) return 0;
+  const words = name.split(/[\s.]+/).filter(Boolean);
+  if (words.some(w => w.startsWith(q))) return 1;
+  return 2;
 }
 
 // Detect if input is Nepali (Devanagari Unicode block: 0900–097F)

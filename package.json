@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "encrypt": "node scripts/encrypt.js"
+    "encrypt": "node scripts/encrypt.js --delete",
+    "decrypt": "node scripts/decrypt.js"
   },
   "dependencies": {
     "react": "^18.3.1",

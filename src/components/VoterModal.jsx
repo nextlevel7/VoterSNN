@@ -31,22 +31,10 @@ export default function VoterModal({ voter, onClose }) {
       value: voter['मतदाता नं'],
     },
     {
-      icon: '🎂',
-      label: 'Age',
-      labelNp: 'उमेर',
-      value: `${voter['उमेर(वर्ष)']} years`,
-    },
-    {
       icon: '⚥',
       label: 'Gender',
       labelNp: 'लिङ्ग',
       value: genderLabel(voter['लिङ्ग']),
-    },
-    {
-      icon: '💑',
-      label: 'Spouse',
-      labelNp: 'पति/पत्नी',
-      value: voter['पति/पत्नीको नाम'] || '-',
     },
     {
       icon: '👨‍👩‍👦',

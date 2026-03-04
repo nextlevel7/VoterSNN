@@ -22,21 +22,7 @@ export default function VoterCard({ voter, onClick }) {
           <span className={`voter-gender-tag ${isFemale ? 'female' : 'male'}`}>
             {genderLabel(voter['लिङ्ग'])}
           </span>
-          <span className="voter-age">
-            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 6v6l4 2" strokeLinecap="round" />
-            </svg>
-            {voter['उमेर(वर्ष)']} yrs
-          </span>
         </div>
-
-        {voter['पति/पत्नीको नाम'] && voter['पति/पत्नीको नाम'] !== '-' && (
-          <p className="voter-detail-row">
-            <span className="voter-detail-icon">💑</span>
-            <span className="voter-detail-text">{voter['पति/पत्नीको नाम']}</span>
-          </p>
-        )}
 
         <p className="voter-detail-row">
           <span className="voter-detail-icon">👨‍👩‍👦</span>
